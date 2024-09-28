@@ -33,5 +33,87 @@ Before setting up this project, ensure you have the following installed:
 First, clone the repository to your local machine:
 
 ```bash
-git clone https://github.com/yourusername/your-repo-name.git
-cd your-repo-name
+git clone https://github.com/CodeMavericks2024/Ethos.git
+
+2. Install Dependencies
+
+Install the Python dependencies listed in requirements.txt:
+
+bash
+
+pip install -r requirements.txt
+
+3. Set Up Environment Variables
+
+Edit the config.py file and provide your configuration settings, such as database connection, secret keys, etc.
+4. Database Setup
+
+Assuming you're using PostgreSQL, initialize and migrate the database using Flask-Migrate:
+
+bash
+
+flask db init
+flask db migrate
+flask db upgrade
+
+5. Running the Application Locally
+
+To run the Flask application locally, use the following command:
+
+bash
+
+python run.py
+
+The application will start running on http://127.0.0.1:5000 by default.
+Deployment
+
+This app is designed to be deployed using Gunicorn with Nginx as a reverse proxy.
+1. Set Up Gunicorn
+
+Configure Gunicorn by running:
+
+bash
+
+gunicorn -c gunicorn_config.py app:app
+
+This will start the Flask app using Gunicorn.
+2. Configure Nginx
+
+Configure Nginx by using the provided nginx_config file. This will allow Nginx to act as a reverse proxy for your Gunicorn server, handling HTTPS requests.
+
+Example Nginx configuration:
+
+nginx
+
+server {
+    listen 80;
+    server_name yourdomain.com;
+    
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # Redirect all HTTP requests to HTTPS
+    listen 443 ssl;
+    ssl_certificate /etc/nginx/ssl/yourdomain.com.crt;
+    ssl_certificate_key /etc/nginx/ssl/yourdomain.com.key;
+}
+
+3. Enabling HTTPS
+
+To enable HTTPS, obtain an SSL certificate (e.g., using Let's Encrypt) and modify the nginx_config file accordingly. This ensures secure communication between the client and server.
+4. Final Steps for Deployment
+
+Once Nginx and Gunicorn are configured, restart the services to apply changes:
+
+bash
+
+sudo systemctl restart nginx
+
+
+**It's Not fully functional but have done backend part. We have done some frontend part but havent integrated with backend If we get chance then we 
+can deploy fully function system.
