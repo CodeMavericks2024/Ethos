@@ -1,0 +1,17 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+#chat {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    margin: auto;
+    padding: 10px;
+}
+
+input, button {
+    margin: 5px;
+    padding: 10px;
+}
+
