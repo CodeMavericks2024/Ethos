@@ -1,119 +1,229 @@
-# Flask Cross-Platform Chat Application
+Secure Cross-Platform Chat Application
+Overview
+This project is a cross-platform chat application built with:
 
-This is a cross-platform chat application built using Flask for the backend and PostgreSQL for the database. The app allows users to register using their email and chat with others who are already registered. The application supports deployment with Gunicorn and Nginx, including HTTPS for secure communication.
+Backend: Python (Flask), Erlang (for real-time communication), PostgreSQL
+Frontend: React (for web), React Native (for iOS/Android), and Electron (for desktop)
+Security: OpenSSL for encryption, Keycloak for authentication (including MFA), and NGINX for reverse proxy.
+Key Features:
+Secure messaging using end-to-end encryption.
+Real-time communication using WebSockets (Socket.IO) and Erlang for performance.
+Cross-platform support for desktop (Electron) and mobile (iOS/Android via React Native).
+OTP Authentication using Keycloak and MFA for login/signup.
+Disappearing Messages: Set messages to automatically delete after a set time period.
+Secure voice/video communication using WebRTC.
+Group chats, message threading, and message expiration.
+Project Structure
+graphql
+Copy code
+root/
+│
+├── backend/
+│   ├── database/                  # Database (PostgreSQL) setup
+│   ├── erlang_server/             # Erlang server logic for real-time chat handling
+│   ├── middleware/                # Middleware for handling security and validation
+│   ├── main.py                    # Entry point for backend API (Python)
+│   ├── Dockerfile                 # Docker configuration for backend
+│   ├── requirements.txt           # Python dependencies
+│   └── erlang_server/             # Erlang server logic
+│
+├── electron/
+│   ├── main.js                    # Electron main process for desktop app
+│   └── package.json               # Electron dependencies
+│
+├── src/
+│   ├── components/                # React components for the front-end
+│   │   ├── Chat.tsx
+│   │   ├── GroupChat.tsx
+│   │   ├── Login.tsx
+│   │   ├── MessageThread.tsx
+│   │   └── UserProfile.tsx
+│   ├── utils/                     # Utility functions
+│   │   ├── encryption.ts          # Handles message encryption/decryption
+│   │   ├── webrtc.ts              # Handles WebRTC signaling
+│   │   └── errorHandling.ts       # Error handling utilities
+│   ├── App.tsx                    # Main React component
+│   ├── main.tsx                   # Entry point for frontend
+│   ├── index.css                  # Global styles
+│   └── i18n/                      # Internationalization support (multi-language)
+│
+├── docker-compose.yml              # Docker setup for backend/frontend
+├── nginx.conf                      # NGINX reverse proxy config
+├── tailwind.config.js              # Tailwind CSS configuration for styling
+├── SecureChatApp/                  # Main directory for app-specific code
+└── tsconfig.json                   # TypeScript config
+MVP (Minimum Viable Product) Guide
+1. Backend Setup
+Database Setup (PostgreSQL):
 
-## Project Structure
+Set up a PostgreSQL database for user data and chat messages.
+Define models in the models.py file inside the backend/database/ folder.
+API Endpoints (Flask):
 
-The project structure is as follows:
+Write backend APIs for:
+User registration (/register)
+User login with OTP (/login)
+Message sending and receiving (/messages)
+Implement encryption logic in encryption.py (inside backend/middleware/):
+python
+Copy code
+from nacl.public import PrivateKey, Box
+def encrypt_message(sender_private_key, receiver_public_key, message):
+    box = Box(sender_private_key, receiver_public_key)
+    return box.encrypt(message)
 
-- **app/**: Contains the main application code, including routes, models, and views for the chat functionalities.
-- **static/**: Contains static files like CSS, JavaScript, and images for styling and frontend interactivity.
-- **templates/**: Contains the HTML files that are rendered as web pages using Flask's `render_template()` method.
-- **config.py**: This file contains the configuration settings for the Flask application (e.g., database settings, secret keys).
-- **gunicorn_config.py**: This file holds the configuration for Gunicorn, the WSGI HTTP server used to run the app.
-- **nginx_config**: The Nginx configuration file, which sets up Nginx as a reverse proxy to serve the app and handle HTTPS requests.
-- **Procfile**: This file is used for deployment on platforms like Heroku to specify the commands that should be run to start the app.
-- **requirements.txt**: Contains a list of all the Python libraries and dependencies required for the app to function.
-- **run.py**: The main entry point of the Flask application, used to run the app locally for testing and development.
+def decrypt_message(receiver_private_key, sender_public_key, encrypted_message):
+    box = Box(receiver_private_key, sender_public_key)
+    return box.decrypt(encrypted_message)
+Authentication with Keycloak:
 
-## Prerequisites
+Install and configure Keycloak for handling user login/signup and MFA.
+Ensure you have Keycloak running locally and link it to the app using an OIDC provider.
+Keycloak can manage sessions, MFA, and user profiles.
+Real-time Chat with Erlang:
 
-Before setting up this project, ensure you have the following installed:
+Set up Erlang server inside backend/erlang_server to handle real-time communication.
+Use Socket.IO in Python to integrate Erlang for chat/message exchange.
+2. Frontend Setup
+React (for Web and Mobile):
 
-- Python 3.x
-- pip (Python package installer)
-- PostgreSQL (for database management)
-- Gunicorn (for running the app in production)
-- Nginx (for reverse proxy and serving HTTPS)
+Create the login form in Login.tsx:
+typescript
+Copy code
+const handleLogin = async () => {
+    try {
+        // Call Keycloak API for authentication
+        // Upon success, navigate to the chat component
+    } catch (error) {
+        console.error("Login failed", error);
+    }
+};
+Create the main chat UI in Chat.tsx, which will:
+Display chats.
+Allow users to send messages (using the backend API).
+Integrate Socket.IO for real-time updates.
+Electron (for Desktop):
 
-## Installation
+In electron/main.js, set up Electron to load your React application:
+javascript
+Copy code
+const { app, BrowserWindow } = require('electron');
+const createWindow = () => {
+    const win = new BrowserWindow({
+        width: 800,
+        height: 600,
+        webPreferences: {
+            nodeIntegration: true
+        }
+    });
+    win.loadURL('http://localhost:3000');
+};
+app.whenReady().then(createWindow);
+3. Disappearing Messages (Message Expiration)
+Backend Logic:
 
-### 1. Clone the Repository
+Add a time_to_live (TTL) parameter in the message API.
+Store the message expiry time in the database.
+Frontend Logic:
 
-First, clone the repository to your local machine:
-
-```bash
-git clone https://github.com/CodeMavericks2024/Ethos.git
-
-2. Install Dependencies
-
-Install the Python dependencies listed in requirements.txt:
-
-bash
-
-pip install -r requirements.txt
-
-3. Set Up Environment Variables
-
-Edit the config.py file and provide your configuration settings, such as database connection, secret keys, etc.
-4. Database Setup
-
-Assuming you're using PostgreSQL, initialize and migrate the database using Flask-Migrate:
-
-bash
-
-flask db init
-flask db migrate
-flask db upgrade
-
-5. Running the Application Locally
-
-To run the Flask application locally, use the following command:
-
-bash
-
-python run.py
-
-The application will start running on http://127.0.0.1:5000 by default.
+In Chat.tsx, give users an option to set a time limit on each message.
+Use a timer to auto-delete messages on the client side, syncing with the backend.
+Advanced Features
+1. Group Chats and Message Threading
+Create an API that supports group creation and add users to group chats.
+Update the UI to display message threads and conversations by groups.
+2. WebRTC (Voice/Video Communication)
+Use WebRTC for peer-to-peer video and voice calls:
+Add signaling logic inside webrtc.ts using WebRTC API.
+Ensure media sharing (images, video) is encrypted before transmission.
+3. Push Notifications
+Use Firebase Cloud Messaging (FCM) or Apple Push Notification Service (APNs) to implement push notifications for mobile.
 Deployment
+1. Docker Setup
+Write a Dockerfile for the backend:
 
-This app is designed to be deployed using Gunicorn with Nginx as a reverse proxy.
-1. Set Up Gunicorn
+Dockerfile
+Copy code
+FROM python:3.9-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+COPY . .
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "main:app"]
+docker-compose.yml (for both backend and frontend):
 
-Configure Gunicorn by running:
-
-bash
-
-gunicorn -c gunicorn_config.py app:app
-
-This will start the Flask app using Gunicorn.
-2. Configure Nginx
-
-Configure Nginx by using the provided nginx_config file. This will allow Nginx to act as a reverse proxy for your Gunicorn server, handling HTTPS requests.
-
-Example Nginx configuration:
-
+yaml
+Copy code
+version: '3'
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "5000:5000"
+    environment:
+      - DATABASE_URL=postgresql://user:password@localhost/db
+  frontend:
+    build: ./electron
+    ports:
+      - "3000:3000"
+  nginx:
+    image: nginx
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "80:80"
+      - "443:443"
+2. NGINX Configuration
+Set up SSL using OpenSSL and configure NGINX to reverse proxy to the backend:
 nginx
-
+Copy code
 server {
     listen 80;
-    server_name yourdomain.com;
-    
+    server_name example.com;
     location / {
-        proxy_pass http://127.0.0.1:8000;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_pass http://backend:5000;
     }
-
-    # Redirect all HTTP requests to HTTPS
-    listen 443 ssl;
-    ssl_certificate /etc/nginx/ssl/yourdomain.com.crt;
-    ssl_certificate_key /etc/nginx/ssl/yourdomain.com.key;
 }
+Testing
+Unit Tests:
 
-3. Enabling HTTPS
+Use pytest for Python testing.
+Set up basic tests for each API route.
+Write React tests with Jest for frontend components.
+Integration Tests:
 
-To enable HTTPS, obtain an SSL certificate (e.g., using Let's Encrypt) and modify the nginx_config file accordingly. This ensures secure communication between the client and server.
-4. Final Steps for Deployment
+Use tools like Postman to test API integrations.
+Write WebSocket integration tests to ensure real-time functionality works as expected.
+End-to-End (E2E) Tests:
 
-Once Nginx and Gunicorn are configured, restart the services to apply changes:
+Use Cypress to simulate user interaction with the application from start to finish.
+Running the Application
+Clone the Repository:
 
 bash
+Copy code
+git clone <repo-url>
+cd chatapp
+Install Backend Dependencies:
 
-sudo systemctl restart nginx
+bash
+Copy code
+cd backend
+pip install -r requirements.txt
+Run Backend Server:
 
+bash
+Copy code
+docker-compose up backend
+Run Frontend:
 
-**It's Not fully functional but have done backend part. We have done some frontend part but havent integrated with backend If we get chance then we 
-can deploy fully function system.
+bash
+Copy code
+cd electron
+npm install
+npm start
+Run Entire App (Docker):
+
+bash
+Copy code
+docker-compose up
