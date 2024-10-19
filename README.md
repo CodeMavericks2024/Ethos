@@ -1,4 +1,4 @@
-Secure Cross-Platform Chat Application
+Secure Cross-Platform Chat Application <br>
 Overview
 This project is a cross-platform chat application built with:
 
