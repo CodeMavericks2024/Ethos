@@ -52,6 +52,8 @@ root/
 ├── tailwind.config.js              # Tailwind CSS configuration for styling
 ├── SecureChatApp/                  # Main directory for app-specific code
 └── tsconfig.json                   # TypeScript config
+
+Integrating all the things
 MVP (Minimum Viable Product) Guide
 1. Backend Setup
 Database Setup (PostgreSQL):
