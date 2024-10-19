@@ -1,62 +1,62 @@
 Secure Cross-Platform Chat Application <br>
-Overview
-This project is a cross-platform chat application built with:
+Overview <br>
+This project is a cross-platform chat application built with: <br>
 
-Backend: Python (Flask), Erlang (for real-time communication), PostgreSQL
-Frontend: React (for web), React Native (for iOS/Android), and Electron (for desktop)
-Security: OpenSSL for encryption, Keycloak for authentication (including MFA), and NGINX for reverse proxy.
-Key Features:
-Secure messaging using end-to-end encryption.
-Real-time communication using WebSockets (Socket.IO) and Erlang for performance.
-Cross-platform support for desktop (Electron) and mobile (iOS/Android via React Native).
-OTP Authentication using Keycloak and MFA for login/signup.
-Disappearing Messages: Set messages to automatically delete after a set time period.
-Secure voice/video communication using WebRTC.
-Group chats, message threading, and message expiration.
-Project Structure
-graphql
-Copy code
-root/
+Backend: Python (Flask), Erlang (for real-time communication), PostgreSQL <br>
+Frontend: React (for web), React Native (for iOS/Android), and Electron (for desktop) <br>
+Security: OpenSSL for encryption, Keycloak for authentication (including MFA), and NGINX for reverse proxy. <br>
+# Key Features:
+Secure messaging using end-to-end encryption. <br>
+Real-time communication using WebSockets (Socket.IO) and Erlang for performance. <br>
+Cross-platform support for desktop (Electron) and mobile (iOS/Android via React Native). <br>
+OTP Authentication using Keycloak and MFA for login/signup. <br>
+Disappearing Messages: Set messages to automatically delete after a set time period. <br>
+Secure voice/video communication using WebRTC. <br>
+Group chats, message threading, and message expiration. <br>
+Project Structure <br>
+graphql <br>
+Copy code <br>
+root/ <br>
 │
 ├── backend/
-│   ├── database/                  # Database (PostgreSQL) setup
-│   ├── erlang_server/             # Erlang server logic for real-time chat handling
-│   ├── middleware/                # Middleware for handling security and validation
-│   ├── main.py                    # Entry point for backend API (Python)
-│   ├── Dockerfile                 # Docker configuration for backend
-│   ├── requirements.txt           # Python dependencies
-│   └── erlang_server/             # Erlang server logic
+│   ├── database/                  # Database (PostgreSQL) setup <br>
+│   ├── erlang_server/             # Erlang server logic for real-time chat handling <br>
+│   ├── middleware/                # Middleware for handling security and validation <br>
+│   ├── main.py                    # Entry point for backend API (Python) <br>
+│   ├── Dockerfile                 # Docker configuration for backend <br>
+│   ├── requirements.txt           # Python dependencies <br>
+│   └── erlang_server/             # Erlang server logic <br>
 │
-├── electron/
-│   ├── main.js                    # Electron main process for desktop app
-│   └── package.json               # Electron dependencies
+├── electron/ <br>
+│   ├── main.js                    # Electron main process for desktop app <br>
+│   └── package.json               # Electron dependencies <br>
 │
-├── src/
-│   ├── components/                # React components for the front-end
-│   │   ├── Chat.tsx
-│   │   ├── GroupChat.tsx
-│   │   ├── Login.tsx
-│   │   ├── MessageThread.tsx
-│   │   └── UserProfile.tsx
-│   ├── utils/                     # Utility functions
-│   │   ├── encryption.ts          # Handles message encryption/decryption
-│   │   ├── webrtc.ts              # Handles WebRTC signaling
-│   │   └── errorHandling.ts       # Error handling utilities
-│   ├── App.tsx                    # Main React component
-│   ├── main.tsx                   # Entry point for frontend
-│   ├── index.css                  # Global styles
-│   └── i18n/                      # Internationalization support (multi-language)
-│
-├── docker-compose.yml              # Docker setup for backend/frontend
-├── nginx.conf                      # NGINX reverse proxy config
-├── tailwind.config.js              # Tailwind CSS configuration for styling
-├── SecureChatApp/                  # Main directory for app-specific code
-└── tsconfig.json                   # TypeScript config
-
-Integrating all the things
-MVP (Minimum Viable Product) Guide
-1. Backend Setup
-Database Setup (PostgreSQL):
+├── src/ <br>
+│   ├── components/                # React components for the front-end <br>
+│   │   ├── Chat.tsx <br>
+│   │   ├── GroupChat.tsx <br>
+│   │   ├── Login.tsx <br>
+│   │   ├── MessageThread.tsx <br>
+│   │   └── UserProfile.tsx <br>
+│   ├── utils/                     # Utility functions <br>
+│   │   ├── encryption.ts          # Handles message encryption/decryption <br>
+│   │   ├── webrtc.ts              # Handles WebRTC signaling <br>
+│   │   └── errorHandling.ts       # Error handling utilities <br>
+│   ├── App.tsx                    # Main React component <br>
+│   ├── main.tsx                   # Entry point for frontend <br>
+│   ├── index.css                  # Global styles <br>
+│   └── i18n/                      # Internationalization support (multi-language) <br>
+│ <br>
+├── docker-compose.yml              # Docker setup for backend/frontend <br>
+├── nginx.conf                      # NGINX reverse proxy config <br>
+├── tailwind.config.js              # Tailwind CSS configuration for styling <br>
+├── SecureChatApp/                  # Main directory for app-specific code <br>
+└── tsconfig.json                   # TypeScript config <br>
+<br>
+Integrating all the things <br>
+MVP (Minimum Viable Product) Guide <br>
+1. Backend Setup <br>
+Database Setup (PostgreSQL): <br>
 
 Set up a PostgreSQL database for user data and chat messages.
 Define models in the models.py file inside the backend/database/ folder.
